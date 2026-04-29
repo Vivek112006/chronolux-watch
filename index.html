@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHRONOLUX — Luxury Timepieces</title>
+  <meta name="description"
+    content="CHRONOLUX — Where engineering meets art. Explore our collection of handcrafted luxury timepieces.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌚</text></svg>">
+</head>
+
+<body>
+
+  <!-- ======================== CINEMATIC INTRO ======================== -->
+  <div id="cinematic-intro">
+    <!-- Particle Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Intro Video Background -->
+    <video id="intro-video" muted playsinline autoplay loop>
+      <source src="Changing_into_ned_202604281754.mp4" type="video/mp4">
+    </video>
+
+    <!-- Intro Overlay Stages -->
+    <div class="intro-stage" id="intro-stage-1">
+      <div class="intro-line intro-line-top"></div>
+      <div class="intro-brand-split">
+        <span class="brand-left">CHRONO</span>
+        <span class="brand-divider"></span>
+        <span class="brand-right">LUX</span>
+      </div>
+      <div class="intro-line intro-line-bottom"></div>
+    </div>
+
+    <div class="intro-stage" id="intro-stage-2">
+      <div class="intro-tagline">
+        <span>W</span><span>h</span><span>e</span><span>r</span><span>e</span>
+        <span>&nbsp;</span>
+        <span>E</span><span>n</span><span>g</span><span>i</span><span>n</span><span>e</span><span>e</span><span>r</span><span>i</span><span>n</span><span>g</span>
+        <span>&nbsp;</span>
+        <span>M</span><span>e</span><span>e</span><span>t</span><span>s</span>
+        <span>&nbsp;</span>
+        <span>A</span><span>r</span><span>t</span>
+      </div>
+    </div>
+
+    <div class="intro-stage" id="intro-stage-3">
+      <div class="intro-year">EST. 2024</div>
+      <div class="intro-swiss">INDIAN CRAFTSMANSHIP</div>
+    </div>
+
+    <!-- Skip Button -->
+    <button class="intro-skip" id="introSkip">SKIP →</button>
+
+    <!-- Progress Bar -->
+    <div class="intro-progress">
+      <div class="intro-progress-bar" id="introProgressBar"></div>
+    </div>
+  </div>
+
+  <!-- ======================== FIXED FRAME BACKGROUND ======================== -->
+  <canvas id="frame-bg-canvas"></canvas>
+  <!-- Persistent dark overlay on the fixed bg -->
+  <div id="frame-bg-overlay"></div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Scroll Progress -->
+  <div id="scroll-progress"></div>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">CHRONO<span>LUX</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#hero" class="active">Home</a>
+      <a href="#carousel3d">Showcase</a>
+      <a href="#trending">Trending</a>
+      <a href="#collection">Collection</a>
+      <a href="#story">Story</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="admin.html" class="nav-admin">Admin</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ======================== HERO SECTION ======================== -->
+  <section class="hero-section" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Swiss Haute Horlogerie</div>
+      <h1 class="hero-title">
+        <span class="hero-title-line" data-reveal="1">CHRONO</span>
+        <span class="hero-title-line hero-title-accent" data-reveal="2">LUX</span>
+      </h1>
+      <p class="hero-subtitle" data-reveal="3">Where Engineering Meets Art</p>
+      <div class="hero-specs-row" data-reveal="4">
+        <div class="hero-spec">
+          <span class="spec-value">Rose Gold</span>
+          <span class="spec-label">Case</span>
+        </div>
+        <div class="hero-spec-divider"></div>
+        <div class="hero-spec">
+          <span class="spec-value">Blue Dial</span>
+          <span class="spec-label">Face</span>
+        </div>
+        <div class="hero-spec-divider"></div>
+        <div class="hero-spec">
+          <span class="spec-value">Sapphire</span>
+          <span class="spec-label">Crystal</span>
+        </div>
+      </div>
+      <a href="#carousel3d" class="hero-cta" data-reveal="5">
+        <span>Explore Collection</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+    <div class="scroll-indicator" id="scrollIndicator">
+      <span>Scroll to Explore</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ======================== 3D MERRY-GO-ROUND CAROUSEL ======================== -->
+  <section class="section carousel-section" id="carousel3d">
+    <div class="glass-panel">
+      <div class="section-header reveal">
+        <span class="section-label">The Showcase</span>
+        <h2>A World of Luxury in Motion</h2>
+        <p>Experience our masterpieces in an immersive 3D carousel</p>
+      </div>
+
+      <div class="carousel-3d-container">
+        <div class="carousel-3d-scene">
+          <div class="carousel-3d-ring" id="carouselRing">
+            <!-- Populated dynamically by script.js -->
+          </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <div class="carousel-controls">
+          <button class="carousel-btn carousel-prev" id="carouselPrev" aria-label="Previous">‹</button>
+          <div class="carousel-dots" id="carouselDots">
+            <!-- Populated dynamically by script.js -->
+          </div>
+          <button class="carousel-btn carousel-next" id="carouselNext" aria-label="Next">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating ambient particles for this section -->
+    <canvas id="carousel-particles"></canvas>
+  </section>
+
+  <!-- ======================== TRENDING ======================== -->
+  <section class="section" id="trending">
+    <div class="glass-panel">
+      <div class="section-header reveal">
+        <span class="section-label">Trending Now</span>
+        <h2>Most Coveted Timepieces</h2>
+        <p>The watches everyone is talking about this season</p>
+      </div>
+      <div class="trending-track" id="trendingTrack">
+        <!-- Populated by JS from localStorage -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== COLLECTION ======================== -->
+  <section class="section" id="collection">
+    <div class="glass-panel">
+      <div class="section-header reveal">
+        <span class="section-label">The Collection</span>
+        <h2>Every Timepiece Tells a Story</h2>
+        <p>Handcrafted with precision, designed for legacy</p>
+      </div>
+      <div class="collection-grid" id="collectionGrid">
+        <!-- Populated by JS from localStorage -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== FEATURE STORY ======================== -->
+  <section class="section" id="story">
+    <div class="glass-panel">
+      <div class="story-grid">
+        <div class="story-image reveal">
+          <img src="assets/ezgif-frame-100.jpg" alt="CHRONOLUX craftsmanship" loading="lazy">
+          <div class="image-reveal" id="storyReveal"></div>
+        </div>
+        <div class="story-content">
+          <span class="section-label reveal">Our Heritage</span>
+          <h2 class="reveal">The Art of <em>Horology</em></h2>
+          <p class="reveal">Each CHRONOLUX timepiece is the culmination of centuries of horological tradition. Our
+            master watchmakers dedicate over 1,200 hours to a single movement, ensuring every gear, spring, and jewel
+            meets the most exacting standards.</p>
+          <p class="reveal">From the initial sketch to the final polish, every detail is considered. The result is not
+            merely a watch — it is a statement of enduring craft, a companion for generations.</p>
+          <div class="story-signature reveal">— The House of Chronolux</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== ABOUT ======================== -->
+  <section class="section" id="about">
+    <div class="glass-panel">
+      <div class="about-content">
+        <span class="section-label reveal">About Us</span>
+        <h2 class="reveal">Crafted for Those Who <em>Appreciate</em> the Extraordinary</h2>
+        <p class="reveal">Founded on the belief that time is the ultimate luxury, CHRONOLUX creates timepieces that
+          transcend trends. Our commitment to excellence is reflected in every facet — from the choice of materials to
+          the precision of movement.</p>
+        <p class="reveal">We don't just make watches. We create heirlooms.</p>
+        <div class="about-stats reveal">
+          <div class="about-stat">
+            <div class="stat-num">1847</div>
+            <div class="stat-label">Established</div>
+          </div>
+          <div class="about-stat">
+            <div class="stat-num">1,200+</div>
+            <div class="stat-label">Hours Per Piece</div>
+          </div>
+          <div class="about-stat">
+            <div class="stat-num">42</div>
+            <div class="stat-label">Master Artisans</div>
+          </div>
+          <div class="about-stat">
+            <div class="stat-num">∞</div>
+            <div class="stat-label">Legacy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== CONTACT ======================== -->
+  <section class="section" id="contact">
+    <div class="glass-panel">
+      <div class="section-header reveal">
+        <span class="section-label">Get in Touch</span>
+        <h2>We'd Love to Hear From You</h2>
+      </div>
+      <div class="contact-grid">
+        <form class="contact-form reveal" id="contactForm" onsubmit="return false">
+          <div class="form-group">
+            <input type="text" id="cName" placeholder=" " required>
+            <label for="cName">Your Name</label>
+          </div>
+          <div class="form-group">
+            <input type="email" id="cEmail" placeholder=" " required>
+            <label for="cEmail">Email Address</label>
+          </div>
+          <div class="form-group">
+            <textarea id="cMessage" placeholder=" " required></textarea>
+            <label for="cMessage">Your Message</label>
+          </div>
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+        <div class="contact-info reveal">
+          <div class="contact-info-item">
+            <div class="icon">✉</div>
+            <div class="info-text">
+              <h4>Email</h4>
+              <a href="mailto:hello@chronolux.com">hello@chronolux.com</a>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="icon">☎</div>
+            <div class="info-text">
+              <h4>Phone</h4>
+              <p>+41 22 900 1847</p>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="icon">💬</div>
+            <div class="info-text">
+              <h4>WhatsApp</h4>
+              <a href="https://wa.me/41229001847" target="_blank">Chat with us</a>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="icon">📷</div>
+            <div class="info-text">
+              <h4>Instagram</h4>
+              <a href="https://instagram.com/chronolux" target="_blank">@chronolux</a>
+            </div>
+          </div>
+          <div class="social-links">
+            <a href="#" aria-label="Instagram">IG</a>
+            <a href="#" aria-label="Facebook">FB</a>
+            <a href="#" aria-label="Pinterest">PIN</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== FOOTER ======================== -->
+  <footer id="footer">
+    <div class="footer-brand">CHRONO<span>LUX</span></div>
+    <div class="footer-links">
+      <a href="#trending">Collection</a>
+      <a href="#story">Story</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="admin.html">Admin</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 CHRONOLUX. All rights reserved. Swiss Made.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollToPlugin.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

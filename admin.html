@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHRONOLUX — Admin Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Design Tokens ── */
+    :root{--clr-primary:#0A0A0A;--clr-cream:#151515;--clr-white:#111111;--clr-gold:#C6A969;--clr-gold-light:#D4BB82;--clr-brown:#8B7355;--clr-text:#FFFFFF;--clr-text-light:#E0E0E0;--clr-text-muted:#A0A0A0;--clr-bg:#000000;--clr-bg-soft:#0A0A0A;--clr-border:rgba(198,169,105,0.2);--clr-danger:#E74C3C;--clr-success:#2ECC71;--ff-heading:'Playfair Display',serif;--ff-body:'Poppins',sans-serif;--ease:cubic-bezier(0.16,1,0.3,1);--radius:12px}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--ff-body);background:var(--clr-bg);color:var(--clr-text);min-height:100vh}
+    ::selection{background:var(--clr-gold);color:#000}
+    img{max-width:100%;display:block}
+
+    /* ── Login Page ── */
+    .login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at center, #111, #000);padding:2rem;position:relative;overflow:hidden}
+    .login-page::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(198,169,105,.1),transparent 70%);top:-100px;right:-100px;border-radius:50%}
+    .login-page::after{content:'';position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(198,169,105,.08),transparent 70%);bottom:-80px;left:-80px;border-radius:50%}
+
+    .login-card{background:rgba(15,15,15,0.6);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,0.05);border-radius:var(--radius);padding:3rem;width:min(420px,100%);box-shadow:0 20px 80px rgba(0,0,0,.3);position:relative;z-index:1}
+    .login-brand{font-family:var(--ff-heading);font-size:1.8rem;text-align:center;letter-spacing:.12em;margin-bottom:.3rem}
+    .login-brand span{color:var(--clr-gold)}
+    .login-sub{text-align:center;font-size:.7rem;letter-spacing:.4em;text-transform:uppercase;color:var(--clr-text-muted);margin-bottom:2.5rem}
+    .login-card h2{font-family:var(--ff-heading);font-size:1.2rem;font-weight:500;text-align:center;margin-bottom:2rem;color:var(--clr-text)}
+
+    .field{margin-bottom:1.5rem;position:relative}
+    .field label{display:block;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--clr-text-muted);margin-bottom:.5rem}
+    .field input{width:100%;padding:.9rem 1rem;border:1px solid var(--clr-border);border-radius:8px;font-family:var(--ff-body);font-size:.9rem;color:var(--clr-text);background:var(--clr-bg);outline:none;transition:border-color .3s,box-shadow .3s}
+    .field input:focus{border-color:var(--clr-gold);box-shadow:0 0 0 3px rgba(198,169,105,.12)}
+
+    /* Passkey PIN boxes */
+    .passkey-wrap{display:flex;gap:.6rem;justify-content:center}
+    .passkey-wrap input{width:46px;height:52px;text-align:center;font-size:1.2rem;font-weight:600;letter-spacing:0;border-radius:8px;border:1px solid var(--clr-border);background:rgba(255,255,255,0.05);color:var(--clr-text);outline:none;transition:border-color .3s,box-shadow .3s}
+    .passkey-wrap input:focus{border-color:var(--clr-gold);box-shadow:0 0 0 3px rgba(198,169,105,.15)}
+
+    .login-btn{width:100%;padding:1rem;background:var(--clr-gold);color:#000;font-family:var(--ff-body);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;transition:all .4s var(--ease);margin-top:.5rem;font-weight:600}
+    .login-btn:hover{background:var(--clr-gold-light)}
+
+    .login-error{text-align:center;font-size:.78rem;color:var(--clr-danger);margin-top:1rem;min-height:1.2rem;opacity:0;transition:opacity .3s}
+    .login-error.show{opacity:1}
+
+    /* ── Dashboard ── */
+    .dashboard{display:none;min-height:100vh}
+    .dash-topbar{display:flex;align-items:center;justify-content:space-between;padding:1rem 3%;background:var(--clr-white);border-bottom:1px solid var(--clr-border);position:sticky;top:0;z-index:100}
+    .dash-brand{font-family:var(--ff-heading);font-size:1.1rem;letter-spacing:.1em}
+    .dash-brand span{color:var(--clr-gold)}
+    .dash-actions{display:flex;align-items:center;gap:1rem}
+    .dash-user{font-size:.75rem;color:var(--clr-text-muted)}
+    .btn-sm{padding:.5rem 1.2rem;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;border:1px solid var(--clr-border);border-radius:6px;cursor:pointer;transition:all .3s;font-family:var(--ff-body);background:transparent;color:var(--clr-text)}
+    .btn-sm:hover{border-color:var(--clr-gold);color:var(--clr-gold)}
+    .btn-sm.danger:hover{border-color:var(--clr-danger);color:var(--clr-danger)}
+
+    .dash-body{max-width:1100px;margin:0 auto;padding:2rem 3%}
+
+    /* Stats */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.2rem;margin-bottom:2.5rem}
+    .stat-card{background:var(--clr-white);padding:1.5rem;border-radius:var(--radius);border:1px solid var(--clr-border);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+    .stat-card .stat-label{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--clr-text-muted);margin-bottom:.5rem}
+    .stat-card .stat-value{font-family:var(--ff-heading);font-size:1.8rem;color:var(--clr-gold)}
+
+    /* Toolbar */
+    .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+    .toolbar h2{font-family:var(--ff-heading);font-size:1.3rem;font-weight:500}
+    .btn-add{padding:.7rem 1.8rem;background:var(--clr-gold);color:var(--clr-white);font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;transition:all .3s;font-family:var(--ff-body)}
+    .btn-add:hover{background:var(--clr-brown)}
+
+    /* Watch Table */
+    .watch-table{width:100%;border-collapse:collapse;background:var(--clr-white);border-radius:var(--radius);overflow:hidden;border:1px solid var(--clr-border);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+    .watch-table th{padding:1rem;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--clr-text-muted);text-align:left;background:var(--clr-bg);border-bottom:1px solid var(--clr-border)}
+    .watch-table td{padding:.8rem 1rem;font-size:.85rem;border-bottom:1px solid rgba(198,169,105,.1);vertical-align:middle}
+    .watch-table tr:last-child td{border-bottom:none}
+    .watch-table .thumb{width:56px;height:56px;object-fit:cover;border-radius:8px;background:var(--clr-bg)}
+    .watch-table .actions{display:flex;gap:.5rem}
+    .watch-table .btn-edit{padding:.35rem .8rem;font-size:.65rem;border:1px solid var(--clr-gold);border-radius:4px;color:var(--clr-gold);background:transparent;cursor:pointer;transition:all .2s}
+    .watch-table .btn-edit:hover{background:var(--clr-gold);color:#fff}
+    .watch-table .btn-del{padding:.35rem .8rem;font-size:.65rem;border:1px solid var(--clr-danger);border-radius:4px;color:var(--clr-danger);background:transparent;cursor:pointer;transition:all .2s}
+    .watch-table .btn-del:hover{background:var(--clr-danger);color:#fff}
+    .cat-badge{display:inline-block;padding:.2rem .6rem;font-size:.6rem;letter-spacing:.1em;border-radius:20px;text-transform:uppercase}
+    .cat-badge.trending{background:rgba(198,169,105,.12);color:var(--clr-gold)}
+    .cat-badge.collection{background:rgba(139,115,85,.1);color:var(--clr-brown)}
+
+    .empty-table{text-align:center;padding:3rem;color:var(--clr-text-muted);font-size:.9rem}
+
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;padding:2rem}
+    .modal-overlay.show{display:flex}
+    .modal{background:var(--clr-white);border-radius:var(--radius);padding:2.5rem;width:min(500px,100%);max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.1);animation:modalIn .3s var(--ease)}
+    @keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .modal h3{font-family:var(--ff-heading);font-size:1.2rem;margin-bottom:1.5rem}
+    .modal .field{margin-bottom:1.2rem}
+    .modal select{width:100%;padding:.9rem 1rem;border:1px solid var(--clr-border);border-radius:8px;font-family:var(--ff-body);font-size:.9rem;color:var(--clr-text);background:var(--clr-bg);outline:none;appearance:none;cursor:pointer}
+    .modal-actions{display:flex;gap:1rem;margin-top:1.5rem}
+    .modal-actions button{flex:1;padding:.8rem;font-family:var(--ff-body);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;border-radius:8px;border:none;cursor:pointer;transition:all .3s}
+    .modal-actions .save{background:var(--clr-gold);color:#fff}
+    .modal-actions .save:hover{background:var(--clr-brown)}
+    .modal-actions .cancel{background:transparent;border:1px solid var(--clr-border);color:var(--clr-text)}
+    .modal-actions .cancel:hover{border-color:var(--clr-text)}
+
+    .back-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--clr-text-muted);margin-bottom:1.5rem;text-decoration:none;letter-spacing:.1em;transition:color .3s}
+    .back-link:hover{color:var(--clr-gold)}
+
+    /* Responsive */
+    @media(max-width:768px){
+      .watch-table{font-size:.78rem}
+      .watch-table th:nth-child(3),.watch-table td:nth-child(3){display:none}
+      .stats-row{grid-template-columns:repeat(2,1fr)}
+      .modal{padding:1.5rem}
+    }
+    @media(max-width:480px){
+      .passkey-wrap input{width:38px;height:44px;font-size:1rem}
+      .login-card{padding:2rem 1.5rem}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════ LOGIN ══════════ -->
+  <div class="login-page" id="loginPage">
+    <div class="login-card">
+      <div class="login-brand">CHRONO<span>LUX</span></div>
+      <div class="login-sub">Admin Studio</div>
+      <h2>Sign In</h2>
+      <form id="loginForm" onsubmit="return false">
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="admin@chronolux.com" required>
+        </div>
+        <div class="field">
+          <label for="loginPass">Password</label>
+          <input type="password" id="loginPass" placeholder="••••••••" required>
+        </div>
+        <div class="field">
+          <label>Passkey (6-digit PIN)</label>
+          <div class="passkey-wrap" id="passkeyWrap">
+            <input type="password" maxlength="1" data-idx="0" inputmode="numeric">
+            <input type="password" maxlength="1" data-idx="1" inputmode="numeric">
+            <input type="password" maxlength="1" data-idx="2" inputmode="numeric">
+            <input type="password" maxlength="1" data-idx="3" inputmode="numeric">
+            <input type="password" maxlength="1" data-idx="4" inputmode="numeric">
+            <input type="password" maxlength="1" data-idx="5" inputmode="numeric">
+          </div>
+        </div>
+        <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+        <div class="login-error" id="loginError">Invalid credentials. Please try again.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════ DASHBOARD ══════════ -->
+  <div class="dashboard" id="dashboard">
+    <div class="dash-topbar">
+      <div class="dash-brand">CHRONO<span>LUX</span> Studio</div>
+      <div class="dash-actions">
+        <span class="dash-user" id="dashUser"></span>
+        <button class="btn-sm" onclick="location.href='index.html'">View Site</button>
+        <button class="btn-sm danger" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+    <div class="dash-body">
+      <a href="index.html" class="back-link">← Back to Showcase</a>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Watches</div><div class="stat-value" id="statTotal">0</div></div>
+        <div class="stat-card"><div class="stat-label">Trending</div><div class="stat-value" id="statTrending">0</div></div>
+        <div class="stat-card"><div class="stat-label">Collection</div><div class="stat-value" id="statCollection">0</div></div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <h2>Manage Watches</h2>
+        <button class="btn-add" id="btnAdd">+ Add Watch</button>
+      </div>
+
+      <!-- Table -->
+      <table class="watch-table" id="watchTable">
+        <thead>
+          <tr><th>Image</th><th>Name</th><th>Description</th><th>Price</th><th>Category</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="watchBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════ ADD/EDIT MODAL ══════════ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalTitle">Add Watch</h3>
+      <form id="watchForm" onsubmit="return false">
+        <input type="hidden" id="watchId">
+        <div class="field">
+          <label>Watch Name</label>
+          <input type="text" id="watchName" placeholder="e.g. Chronolux Heritage" required>
+        </div>
+        <div class="field">
+          <label>Image URL</label>
+          <input type="text" id="watchImage" placeholder="https://... or local filename" required>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input type="text" id="watchDesc" placeholder="Short description">
+        </div>
+        <div class="field">
+          <label>Price</label>
+          <input type="text" id="watchPrice" placeholder="e.g. $12,500" required>
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="watchCat">
+            <option value="showcase">Showcase (3D Carousel)</option>
+            <option value="trending">Trending</option>
+            <option value="collection">Collection</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="cancel" id="modalCancel">Cancel</button>
+          <button type="submit" class="save" id="modalSave">Save Watch</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* ================================================
+       CHRONOLUX Admin — Login + CRUD + localStorage
+       ================================================ */
+
+    // ── Default Admin Credentials ──
+    const DEFAULT_ADMIN = { email: 'admin@chronolux.com', password: 'Chrono@2026', passkey: '192026' };
+    const DEFAULT_WATCHES = [
+      { id:'w1', name:'Chronolux Sovereign', description:'18K rose gold chronograph with moonphase complication', price:'$18,750', image:'ezgif-frame-100.jpg', category:'showcase' },
+      { id:'w2', name:'Chronolux Voyager', description:'Titanium sports chronograph with ceramic bezel', price:'$8,900', image:'watch-carousel-1.png', category:'showcase' },
+      { id:'w3', name:'Chronolux Celestial', description:'Skeleton tourbillon with sapphire case back', price:'$22,000', image:'ezgif-frame-120.jpg', category:'showcase' },
+      { id:'w4', name:'Chronolux Meridian', description:'White gold dress watch with enamel dial', price:'$15,200', image:'watch-carousel-2.png', category:'showcase' },
+      { id:'w5', name:'Chronolux Heritage', description:'Hand-wound movement, 40mm rose gold case', price:'$12,500', image:'ezgif-frame-090.jpg', category:'trending' },
+      { id:'w6', name:'Chronolux Eclipse', description:'Automatic chronograph with perpetual calendar', price:'$14,800', image:'ezgif-frame-140.jpg', category:'trending' },
+      { id:'w7', name:'Chronolux Artisan', description:'Hand-finished movement with Geneva stripes', price:'$9,500', image:'ezgif-frame-150.jpg', category:'collection' },
+      { id:'w8', name:'Chronolux Luminary', description:'Diamond-set bezel with mother of pearl dial', price:'$11,200', image:'ezgif-frame-160.jpg', category:'collection' },
+      { id:'w9', name:'Chronolux Apex', description:'Carbon fiber case with racing-inspired chronograph', price:'$7,800', image:'ezgif-frame-170.jpg', category:'collection' },
+      { id:'w10', name:'Chronolux Nocturne', description:'Black DLC-coated titanium, luminous hands', price:'$10,400', image:'ezgif-frame-180.jpg', category:'collection' },
+    ];
+
+    // ── Init ──
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    // Seed data on first visit
+    if (!localStorage.getItem('chronolux_admin')) localStorage.setItem('chronolux_admin', JSON.stringify(DEFAULT_ADMIN));
+    if (!localStorage.getItem('chronolux_watches')) localStorage.setItem('chronolux_watches', JSON.stringify(DEFAULT_WATCHES));
+
+    function getAdmin() { return JSON.parse(localStorage.getItem('chronolux_admin')); }
+    function getWatches() {
+      let w = JSON.parse(localStorage.getItem('chronolux_watches') || '[]');
+      let modified = false;
+      w = w.map(watch => {
+        if (watch.image && !watch.image.startsWith('http') && !watch.image.startsWith('assets/')) {
+          watch.image = 'assets/' + watch.image;
+          modified = true;
+        }
+        return watch;
+      });
+      if (modified) saveWatches(w);
+      return w;
+    }
+    function saveWatches(w) { localStorage.setItem('chronolux_watches', JSON.stringify(w)); }
+
+    // Check if already logged in (session)
+    if (sessionStorage.getItem('chronolux_logged_in')) showDashboard();
+
+    // ── Passkey PIN Input ──
+    const pkInputs = $$('#passkeyWrap input');
+    pkInputs.forEach((inp, i) => {
+      inp.addEventListener('input', e => {
+        if (inp.value.length === 1 && i < 5) pkInputs[i + 1].focus();
+      });
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Backspace' && !inp.value && i > 0) { pkInputs[i - 1].focus(); pkInputs[i - 1].value = ''; }
+      });
+      // Paste support
+      inp.addEventListener('paste', e => {
+        e.preventDefault();
+        const paste = (e.clipboardData || window.clipboardData).getData('text').trim();
+        for (let j = 0; j < Math.min(paste.length, 6); j++) { pkInputs[j].value = paste[j]; }
+        if (paste.length >= 6) pkInputs[5].focus();
+      });
+    });
+
+    // ── Login ──
+    $('#loginForm').addEventListener('submit', () => {
+      const email = $('#loginEmail').value.trim();
+      const pass = $('#loginPass').value;
+      const pk = Array.from(pkInputs).map(i => i.value).join('');
+      const admin = getAdmin();
+      const err = $('#loginError');
+
+      if (email === admin.email && pass === admin.password && pk === admin.passkey) {
+        err.classList.remove('show');
+        sessionStorage.setItem('chronolux_logged_in', 'true');
+        showDashboard();
+      } else {
+        err.classList.add('show');
+        // Shake animation
+        const card = $('.login-card');
+        card.style.animation = 'none';
+        card.offsetHeight; // reflow
+        card.style.animation = 'shake .4s ease';
+      }
+    });
+
+    // Shake keyframe
+    const shakeStyle = document.createElement('style');
+    shakeStyle.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}';
+    document.head.appendChild(shakeStyle);
+
+    // ── Show Dashboard ──
+    function showDashboard() {
+      $('#loginPage').style.display = 'none';
+      $('#dashboard').style.display = 'block';
+      $('#dashUser').textContent = getAdmin().email;
+      renderTable();
+    }
+
+    // ── Logout ──
+    $('#logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('chronolux_logged_in');
+      location.reload();
+    });
+
+    // ── Render Watch Table ──
+    function renderTable() {
+      const watches = getWatches();
+      const body = $('#watchBody');
+      $('#statTotal').textContent = watches.length;
+      $('#statTrending').textContent = watches.filter(w => w.category === 'trending').length;
+      $('#statCollection').textContent = watches.filter(w => w.category === 'collection').length;
+
+      if (watches.length === 0) {
+        body.innerHTML = '<tr><td colspan="6" class="empty-table">No watches yet. Click "+ Add Watch" to get started.</td></tr>';
+        return;
+      }
+
+      body.innerHTML = watches.map(w => `
+        <tr>
+          <td><img class="thumb" src="${w.image}" alt="${w.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 56 56%22><rect fill=%22%23F5F5DC%22 width=%2256%22 height=%2256%22/><text x=%2228%22 y=%2234%22 text-anchor=%22middle%22 fill=%22%23C6A969%22 font-size=%2218%22>⌚</text></svg>'"></td>
+          <td><strong>${w.name}</strong></td>
+          <td>${w.description || '—'}</td>
+          <td>${w.price}</td>
+          <td><span class="cat-badge ${w.category}">${w.category}</span></td>
+          <td class="actions">
+            <button class="btn-edit" onclick="editWatch('${w.id}')">Edit</button>
+            <button class="btn-del" onclick="deleteWatch('${w.id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ── Modal ──
+    function openModal(title = 'Add Watch', watch = null) {
+      $('#modalTitle').textContent = title;
+      $('#watchId').value = watch ? watch.id : '';
+      $('#watchName').value = watch ? watch.name : '';
+      $('#watchImage').value = watch ? watch.image : '';
+      $('#watchDesc').value = watch ? (watch.description || '') : '';
+      $('#watchPrice').value = watch ? watch.price : '';
+      $('#watchCat').value = watch ? watch.category : 'trending';
+      $('#modalOverlay').classList.add('show');
+    }
+
+    function closeModal() { $('#modalOverlay').classList.remove('show'); }
+
+    $('#btnAdd').addEventListener('click', () => openModal('Add Watch'));
+    $('#modalCancel').addEventListener('click', closeModal);
+    $('#modalOverlay').addEventListener('click', e => { if (e.target === $('#modalOverlay')) closeModal(); });
+
+    // ── Save Watch ──
+    $('#watchForm').addEventListener('submit', () => {
+      const id = $('#watchId').value || 'w' + Date.now();
+      const watch = {
+        id,
+        name: $('#watchName').value.trim(),
+        image: $('#watchImage').value.trim(),
+        description: $('#watchDesc').value.trim(),
+        price: $('#watchPrice').value.trim(),
+        category: $('#watchCat').value,
+      };
+      if (!watch.name || !watch.image || !watch.price) return;
+
+      let watches = getWatches();
+      const idx = watches.findIndex(w => w.id === id);
+      if (idx >= 0) watches[idx] = watch;
+      else watches.push(watch);
+
+      saveWatches(watches);
+      closeModal();
+      renderTable();
+    });
+
+    // ── Edit Watch ──
+    function editWatch(id) {
+      const w = getWatches().find(w => w.id === id);
+      if (w) openModal('Edit Watch', w);
+    }
+
+    // ── Delete Watch ──
+    function deleteWatch(id) {
+      if (!confirm('Remove this watch from the collection?')) return;
+      const watches = getWatches().filter(w => w.id !== id);
+      saveWatches(watches);
+      renderTable();
+    }
+  </script>
+</body>
+</html>
