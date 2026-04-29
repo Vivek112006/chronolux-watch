@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CHRONOLUX — Admin Studio</title>
+  <title> — Admin Studio</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     /* ── Design Tokens ── */
@@ -124,7 +124,7 @@
       <form id="loginForm" onsubmit="return false">
         <div class="field">
           <label for="loginEmail">Email</label>
-          <input type="email" id="loginEmail" placeholder="admin@chronolux.com" required>
+          <input type="email" id="loginEmail" placeholder="admin@aura.com" required>
         </div>
         <div class="field">
           <label for="loginPass">Password</label>
@@ -191,7 +191,7 @@
         <input type="hidden" id="watchId">
         <div class="field">
           <label>Watch Name</label>
-          <input type="text" id="watchName" placeholder="e.g. Chronolux Heritage" required>
+          <input type="text" id="watchName" placeholder="e.g. aura Heritage" required>
         </div>
         <div class="field">
           <label>Image URL</label>
@@ -223,22 +223,22 @@
 
   <script>
     /* ================================================
-       CHRONOLUX Admin — Login + CRUD + localStorage
+       aura Admin — Login + CRUD + localStorage
        ================================================ */
 
     // ── Default Admin Credentials ──
-    const DEFAULT_ADMIN = { email: 'admin@chronolux.com', password: 'Chrono@2026', passkey: '192026' };
+    const DEFAULT_ADMIN = { email: 'admin@aura.com', password: 'Chrono@2026', passkey: '192026' };
     const DEFAULT_WATCHES = [
-      { id:'w1', name:'Chronolux Sovereign', description:'18K rose gold chronograph with moonphase complication', price:'$18,750', image:'ezgif-frame-100.jpg', category:'showcase' },
-      { id:'w2', name:'Chronolux Voyager', description:'Titanium sports chronograph with ceramic bezel', price:'$8,900', image:'watch-carousel-1.png', category:'showcase' },
-      { id:'w3', name:'Chronolux Celestial', description:'Skeleton tourbillon with sapphire case back', price:'$22,000', image:'ezgif-frame-120.jpg', category:'showcase' },
-      { id:'w4', name:'Chronolux Meridian', description:'White gold dress watch with enamel dial', price:'$15,200', image:'watch-carousel-2.png', category:'showcase' },
-      { id:'w5', name:'Chronolux Heritage', description:'Hand-wound movement, 40mm rose gold case', price:'$12,500', image:'ezgif-frame-090.jpg', category:'trending' },
-      { id:'w6', name:'Chronolux Eclipse', description:'Automatic chronograph with perpetual calendar', price:'$14,800', image:'ezgif-frame-140.jpg', category:'trending' },
-      { id:'w7', name:'Chronolux Artisan', description:'Hand-finished movement with Geneva stripes', price:'$9,500', image:'ezgif-frame-150.jpg', category:'collection' },
-      { id:'w8', name:'Chronolux Luminary', description:'Diamond-set bezel with mother of pearl dial', price:'$11,200', image:'ezgif-frame-160.jpg', category:'collection' },
-      { id:'w9', name:'Chronolux Apex', description:'Carbon fiber case with racing-inspired chronograph', price:'$7,800', image:'ezgif-frame-170.jpg', category:'collection' },
-      { id:'w10', name:'Chronolux Nocturne', description:'Black DLC-coated titanium, luminous hands', price:'$10,400', image:'ezgif-frame-180.jpg', category:'collection' },
+      { id:'w1', name:'aura Sovereign', description:'18K rose gold chronograph with moonphase complication', price:'$18,750', image:'ezgif-frame-100.jpg', category:'showcase' },
+      { id:'w2', name:'aura Voyager', description:'Titanium sports chronograph with ceramic bezel', price:'$8,900', image:'watch-carousel-1.png', category:'showcase' },
+      { id:'w3', name:'aura Celestial', description:'Skeleton tourbillon with sapphire case back', price:'$22,000', image:'ezgif-frame-120.jpg', category:'showcase' },
+      { id:'w4', name:'aura Meridian', description:'White gold dress watch with enamel dial', price:'$15,200', image:'watch-carousel-2.png', category:'showcase' },
+      { id:'w5', name:'aura Heritage', description:'Hand-wound movement, 40mm rose gold case', price:'$12,500', image:'ezgif-frame-090.jpg', category:'trending' },
+      { id:'w6', name:'aura Eclipse', description:'Automatic chronograph with perpetual calendar', price:'$14,800', image:'ezgif-frame-140.jpg', category:'trending' },
+      { id:'w7', name:'aura Artisan', description:'Hand-finished movement with Geneva stripes', price:'$9,500', image:'ezgif-frame-150.jpg', category:'collection' },
+      { id:'w8', name:'aura Luminary', description:'Diamond-set bezel with mother of pearl dial', price:'$11,200', image:'ezgif-frame-160.jpg', category:'collection' },
+      { id:'w9', name:'aura Apex', description:'Carbon fiber case with racing-inspired chronograph', price:'$7,800', image:'ezgif-frame-170.jpg', category:'collection' },
+      { id:'w10', name:'aura Nocturne', description:'Black DLC-coated titanium, luminous hands', price:'$10,400', image:'ezgif-frame-180.jpg', category:'collection' },
     ];
 
     // ── Init ──
@@ -246,12 +246,12 @@
     const $$ = s => document.querySelectorAll(s);
 
     // Seed data on first visit
-    if (!localStorage.getItem('chronolux_admin')) localStorage.setItem('chronolux_admin', JSON.stringify(DEFAULT_ADMIN));
-    if (!localStorage.getItem('chronolux_watches')) localStorage.setItem('chronolux_watches', JSON.stringify(DEFAULT_WATCHES));
+    if (!localStorage.getItem('aura_admin')) localStorage.setItem('aura_admin', JSON.stringify(DEFAULT_ADMIN));
+    if (!localStorage.getItem('aura_watches')) localStorage.setItem('aura_watches', JSON.stringify(DEFAULT_WATCHES));
 
-    function getAdmin() { return JSON.parse(localStorage.getItem('chronolux_admin')); }
+    function getAdmin() { return JSON.parse(localStorage.getItem('aura_admin')); }
     function getWatches() {
-      let w = JSON.parse(localStorage.getItem('chronolux_watches') || '[]');
+      let w = JSON.parse(localStorage.getItem('aura_watches') || '[]');
       let modified = false;
       w = w.map(watch => {
         if (watch.image && !watch.image.startsWith('http') && !watch.image.startsWith('assets/')) {
@@ -263,10 +263,10 @@
       if (modified) saveWatches(w);
       return w;
     }
-    function saveWatches(w) { localStorage.setItem('chronolux_watches', JSON.stringify(w)); }
+    function saveWatches(w) { localStorage.setItem('aura_watches', JSON.stringify(w)); }
 
     // Check if already logged in (session)
-    if (sessionStorage.getItem('chronolux_logged_in')) showDashboard();
+    if (sessionStorage.getItem('aura_logged_in')) showDashboard();
 
     // ── Passkey PIN Input ──
     const pkInputs = $$('#passkeyWrap input');
@@ -296,7 +296,7 @@
 
       if (email === admin.email && pass === admin.password && pk === admin.passkey) {
         err.classList.remove('show');
-        sessionStorage.setItem('chronolux_logged_in', 'true');
+        sessionStorage.setItem('aura_logged_in', 'true');
         showDashboard();
       } else {
         err.classList.add('show');
@@ -323,7 +323,7 @@
 
     // ── Logout ──
     $('#logoutBtn').addEventListener('click', () => {
-      sessionStorage.removeItem('chronolux_logged_in');
+      sessionStorage.removeItem('aura_logged_in');
       location.reload();
     });
 
